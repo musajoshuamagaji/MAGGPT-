@@ -1,0 +1,1055 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080b18">
+<meta name="description" content="MAGGPT - Your intelligent AI companion">
+<title>MAGGPT — Your AI Companion</title>
+
+<style>
+:root {
+  --bg:#080b18;
+  --panel:#11172b;
+  --panel2:#171e35;
+  --purple:#9b7bff;
+  --cyan:#53e0dc;
+  --text:#f5f6ff;
+  --muted:#969dbb;
+  --border:rgba(255,255,255,.09);
+}
+
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% -20%,#30215b 0%,transparent 48%),
+    var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+  min-height:100dvh;
+}
+
+button,textarea,input {font:inherit}
+button {
+  cursor:pointer;
+  color:inherit;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.app {
+  min-height:100vh;
+  min-height:100dvh;
+  max-width:950px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:17px 16px;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,11,24,.9);
+  position:sticky;
+  top:0;
+  z-index:5;
+  backdrop-filter:blur(18px);
+}
+
+.brand {display:flex;align-items:center;gap:11px}
+
+.logo {
+  width:43px;
+  height:43px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  background:linear-gradient(135deg,#9b7bff,#53e0dc);
+  box-shadow:0 0 28px #9b7bff35;
+}
+
+.brand h1 {font-size:20px;letter-spacing:1.5px}
+.brand small {color:var(--muted);display:block;font-size:11px;margin-top:2px}
+
+.status {
+  font-size:11px;
+  color:var(--cyan);
+  border:1px solid #53e0dc40;
+  background:#53e0dc0c;
+  padding:7px 10px;
+  border-radius:20px;
+}
+
+.gradient {
+  background:linear-gradient(90deg,#b49bff,#53e0dc);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+#newChat {
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:11px;
+}
+
+main {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:22px 14px 12px;
+}
+
+.welcome {
+  text-align:center;
+  padding:24px 0 25px;
+}
+
+.orb {
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  margin:0 auto 22px;
+  display:grid;
+  place-items:center;
+  font-size:40px;
+  background:radial-gradient(circle at 35% 25%,#fff 0%,#b8a7ff 5%,#8154ff 24%,#222657 58%,#0a1024 76%);
+  box-shadow:0 0 28px #8e6bff55,0 0 75px #53e0dc18;
+  animation:float 4s ease-in-out infinite;
+  position:relative;
+}
+
+.orb:after {
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border:1px solid #9b7bff70;
+  border-radius:50%;
+  animation:pulse 3s ease-out infinite;
+}
+
+@keyframes float {
+  0%,100% {transform:translateY(0)}
+  50% {transform:translateY(-7px)}
+}
+
+@keyframes pulse {
+  0% {transform:scale(.94);opacity:.8}
+  100% {transform:scale(1.25);opacity:0}
+}
+
+.welcome h2 {
+  font-size:clamp(25px,6vw,36px);
+  margin-bottom:10px;
+  letter-spacing:-.8px;
+}
+
+.welcome p {
+  font-size:13px;
+  line-height:1.7;
+  color:var(--muted);
+  max-width:360px;
+  margin:auto;
+}
+
+.suggestions {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.suggestion {
+  background:linear-gradient(145deg,#171d35,#101528);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:15px 12px;
+  text-align:left;
+  min-height:94px;
+}
+
+.suggestion:active {
+  transform:scale(.98);
+  border-color:var(--purple);
+}
+
+.suggestion .emoji {
+  font-size:22px;
+  display:block;
+  margin-bottom:9px;
+}
+
+.suggestion strong {
+  display:block;
+  font-size:12px;
+  margin-bottom:4px;
+}
+
+.suggestion small {
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.5;
+}
+
+#chat {display:flex;flex-direction:column;gap:17px;padding-bottom:20px}
+
+.message {
+  max-width:94%;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  animation:appear .2s ease;
+}
+
+@keyframes appear {
+  from {opacity:0;transform:translateY(5px)}
+  to {opacity:1;transform:translateY(0)}
+}
+
+.message.user {align-self:flex-end}
+.message.ai {align-self:flex-start}
+
+.message-label {
+  font-size:10px;
+  color:var(--muted);
+  padding:0 5px;
+}
+
+.bubble {
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:13px 14px;
+  font-size:13px;
+  line-height:1.75;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+.user .bubble {
+  background:linear-gradient(135deg,#6550b8,#453c8b);
+  border-color:#9b7bff45;
+  border-bottom-right-radius:5px;
+}
+
+.ai .bubble {
+  background:var(--panel);
+  border-bottom-left-radius:5px;
+}
+
+.bubble img {
+  max-width:100%;
+  max-height:240px;
+  object-fit:contain;
+  border-radius:10px;
+  display:block;
+  margin-top:8px;
+}
+
+.message-actions {display:flex;gap:8px;flex-wrap:wrap}
+
+.mini-btn {
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:9px;
+  padding:6px 9px;
+  font-size:10px;
+  color:var(--muted);
+}
+
+.typing {color:var(--cyan);font-size:12px;padding:10px 4px}
+
+.composer-wrap {
+  position:sticky;
+  bottom:0;
+  padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,var(--bg) 80%,transparent);
+  z-index:4;
+}
+
+.composer {
+  background:#141a2e;
+  border:1px solid #9b7bff50;
+  border-radius:19px;
+  padding:10px;
+  box-shadow:0 -5px 35px #0002,0 8px 30px #0003;
+}
+
+#prompt {
+  width:100%;
+  background:transparent;
+  border:0;
+  outline:none;
+  color:white;
+  resize:none;
+  min-height:45px;
+  max-height:130px;
+  padding:9px 7px;
+  font-size:14px;
+  line-height:1.6;
+}
+
+#prompt::placeholder {color:#8189a8}
+
+.toolbar {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding-top:7px;
+  border-top:1px solid var(--border);
+}
+
+.tool-btn {
+  width:39px;
+  height:39px;
+  border-radius:12px;
+  background:#202741;
+  border:1px solid var(--border);
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  flex-shrink:0;
+}
+
+#sendBtn {
+  margin-left:auto;
+  background:linear-gradient(135deg,#9b7bff,#6650d8);
+  border:0;
+  width:43px;
+  height:43px;
+  border-radius:14px;
+  font-size:20px;
+}
+
+#sendBtn:disabled {opacity:.45}
+#voiceBtn.listening {background:#ff526a;animation:pulse 1.5s infinite}
+
+#imagePreview {
+  display:none;
+  padding:4px 4px 10px;
+  position:relative;
+  width:fit-content;
+}
+
+#previewImg {
+  max-width:110px;
+  max-height:100px;
+  border-radius:10px;
+  object-fit:cover;
+}
+
+.remove-image {
+  position:absolute;
+  right:-6px;
+  top:-6px;
+  border:0;
+  background:#ff5b75;
+  border-radius:50%;
+  width:24px;
+  height:24px;
+  color:white;
+}
+
+.footer {
+  text-align:center;
+  color:#707895;
+  font-size:10px;
+  padding:0 12px 10px;
+  line-height:1.7;
+}
+
+.footer strong {color:#a38aff}
+
+.toast {
+  position:fixed;
+  left:50%;
+  bottom:125px;
+  transform:translateX(-50%);
+  background:#252b43;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px 15px;
+  font-size:12px;
+  color:white;
+  z-index:30;
+  width:max-content;
+  max-width:88%;
+  text-align:center;
+  box-shadow:0 5px 25px #0006;
+  display:none;
+}
+
+/* Photo chooser */
+.modal-backdrop {
+  position:fixed;
+  inset:0;
+  z-index:50;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:16px;
+  backdrop-filter:blur(5px);
+}
+
+.modal-backdrop.open {display:flex}
+
+.photo-modal {
+  width:100%;
+  max-width:420px;
+  background:#151b30;
+  border:1px solid #9b7bff50;
+  border-radius:23px;
+  padding:22px;
+  box-shadow:0 15px 60px #0008;
+  animation:slideup .2s ease;
+}
+
+@keyframes slideup {
+  from {transform:translateY(25px);opacity:0}
+  to {transform:translateY(0);opacity:1}
+}
+
+.photo-modal h3 {font-size:19px;margin-bottom:7px}
+.photo-modal p {font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+
+.photo-option {
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:15px;
+  margin-top:10px;
+  text-align:left;
+  background:#202741;
+  border:1px solid var(--border);
+  border-radius:15px;
+}
+
+.photo-option:active {border-color:var(--purple)}
+
+.option-icon {
+  width:45px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  border-radius:13px;
+  background:#9b7bff20;
+}
+
+.photo-option strong {display:block;font-size:13px}
+.photo-option small {display:block;color:var(--muted);font-size:11px;margin-top:4px}
+
+.cancel-photo {
+  width:100%;
+  margin-top:14px;
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+}
+
+@media(min-width:650px) {
+  main {padding:28px 28px 15px}
+  .suggestions {grid-template-columns:repeat(4,minmax(0,1fr))}
+  .suggestion {min-height:115px}
+  .composer-wrap {padding-left:28px;padding-right:28px}
+  .modal-backdrop {align-items:center}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">
+    <div class="logo">✦</div>
+    <div>
+      <h1>MAG<span class="gradient">GPT</span></h1>
+      <small>Your intelligent AI companion</small>
+    </div>
+  </div>
+  <button id="newChat">＋ New chat</button>
+</header>
+
+<main>
+  <section class="welcome" id="welcome">
+    <div class="orb">✦</div>
+    <h2>Meet your <span class="gradient">AI universe.</span></h2>
+    <p>Ask anything. Learn something new. Solve problems. Let your imagination go further with MAGGPT.</p>
+  </section>
+
+  <section class="suggestions" id="suggestions">
+    <button class="suggestion" data-prompt="Explain a difficult topic to me step by step.">
+      <span class="emoji">🧠</span>
+      <strong>Learn anything</strong>
+      <small>Clear explanations, step by step</small>
+    </button>
+    <button class="suggestion" data-prompt="Help me solve a mathematics problem and explain every step.">
+      <span class="emoji">📚</span>
+      <strong>Study assistant</strong>
+      <small>Maths, physics and chemistry</small>
+    </button>
+    <button class="suggestion" data-prompt="Help me write clean code for a beginner-friendly project.">
+      <span class="emoji">💻</span>
+      <strong>Write code</strong>
+      <small>Build and debug projects</small>
+    </button>
+    <button class="suggestion" data-prompt="Give me five unique and practical project ideas I could build.">
+      <span class="emoji">✨</span>
+      <strong>Get creative</strong>
+      <small>Explore new ideas</small>
+    </button>
+  </section>
+
+  <section id="chat" aria-live="polite"></section>
+  <div id="typing" class="typing" hidden>MAGGPT is thinking...</div>
+</main>
+
+<div class="composer-wrap">
+  <div class="composer">
+
+    <div id="imagePreview">
+      <img id="previewImg" alt="Selected photo preview">
+      <button class="remove-image" id="removeImage" aria-label="Remove photo">×</button>
+    </div>
+
+    <textarea id="prompt" rows="1" placeholder="Message MAGGPT..." aria-label="Your message"></textarea>
+
+    <div class="toolbar">
+      <button class="tool-btn" id="uploadBtn" aria-label="Add photo" title="Camera or gallery">＋</button>
+
+      <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
+      <input id="galleryInput" type="file" accept="image/*" hidden>
+
+      <button class="tool-btn" id="voiceBtn" aria-label="Voice input" title="Speak">🎙️</button>
+      <button class="tool-btn" id="readToggle" aria-label="Toggle spoken replies" title="Spoken replies">🔊</button>
+      <span style="color:var(--muted);font-size:10px">AI assistant</span>
+      <button id="sendBtn" aria-label="Send message" title="Send">➤</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  MAGGPT can make mistakes. Check important information.<br>
+  Built with ✦ by <strong>Dev Joshua</strong>
+</div>
+</div>
+
+<!-- Camera/gallery chooser -->
+<div class="modal-backdrop" id="photoModal" role="dialog" aria-modal="true" aria-labelledby="photoTitle">
+  <div class="photo-modal">
+    <h3 id="photoTitle">Add a photo 📸</h3>
+    <p>Take a new picture of a question or select an image already saved on your phone.</p>
+
+    <button class="photo-option" id="takePhoto">
+      <span class="option-icon">📷</span>
+      <span>
+        <strong>Take a photo</strong>
+        <small>Open your phone camera</small>
+      </span>
+    </button>
+
+    <button class="photo-option" id="choosePhoto">
+      <span class="option-icon">🖼️</span>
+      <span>
+        <strong>Choose from gallery</strong>
+        <small>Select a saved picture or image file</small>
+      </span>
+    </button>
+
+    <button class="cancel-photo" id="cancelPhoto">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /*
+    MAGGPT FRONT END
+
+    AI endpoint expected:
+    POST /api/chat
+
+    JSON body:
+    {
+      message: "question",
+      image: "data URL or null",
+      history: []
+    }
+
+    Expected response:
+    { reply: "AI response" }
+
+    Keep API keys on your server.
+
+    Optional Android native bridge:
+    Android.startVoiceRecognition()
+    Android.speakText(text)
+    Android.stopSpeaking()
+
+    Android voice callback:
+    window.onMAGGPTVoiceResult("recognized words")
+  */
+
+  const $ = id => document.getElementById(id);
+
+  const prompt = $("prompt");
+  const chat = $("chat");
+  const typing = $("typing");
+  const sendBtn = $("sendBtn");
+  const voiceBtn = $("voiceBtn");
+  const readToggle = $("readToggle");
+  const cameraInput = $("cameraInput");
+  const galleryInput = $("galleryInput");
+  const imagePreview = $("imagePreview");
+  const previewImg = $("previewImg");
+  const photoModal = $("photoModal");
+  const toastBox = $("toast");
+
+  let selectedImage = null;
+  let previewObjectURL = null;
+  let history = [];
+  let busy = false;
+  let speakReplies = true;
+  let recognition = null;
+  let toastTimer = null;
+
+  function toast(message) {
+    toastBox.textContent = message;
+    toastBox.style.display = "block";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toastBox.style.display = "none";
+    }, 2800);
+  }
+
+  function scrollToChat() {
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+      });
+    }, 80);
+  }
+
+  function addMessage(role, text, imageUrl) {
+    $("welcome").style.display = "none";
+    $("suggestions").style.display = "none";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "message " + (role === "user" ? "user" : "ai");
+
+    const label = document.createElement("div");
+    label.className = "message-label";
+    label.textContent = role === "user" ? "You" : "MAGGPT";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text || (imageUrl ? "Please examine this image." : "");
+
+    if (imageUrl) {
+      const img = document.createElement("img");
+      img.src = imageUrl;
+      img.alt = "Attached image";
+      bubble.appendChild(img);
+    }
+
+    wrapper.append(label, bubble);
+
+    if (role !== "user" && text) {
+      const actions = document.createElement("div");
+      actions.className = "message-actions";
+
+      const copy = document.createElement("button");
+      copy.className = "mini-btn";
+      copy.textContent = "📋 Copy";
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          toast("Response copied.");
+        } catch {
+          toast("Copy isn't available here.");
+        }
+      });
+
+      const speak = document.createElement("button");
+      speak.className = "mini-btn";
+      speak.textContent = "🔊 Read aloud";
+      speak.addEventListener("click", () => speakText(text));
+
+      actions.append(copy, speak);
+      wrapper.appendChild(actions);
+    }
+
+    chat.appendChild(wrapper);
+    scrollToChat();
+    return wrapper;
+  }
+
+  function setBusy(value) {
+    busy = value;
+    sendBtn.disabled = value;
+    typing.hidden = !value;
+  }
+
+  function fileToDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Could not read the image."));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function sendMessage(prefilledText) {
+    if (busy) return;
+
+    const message = (
+      typeof prefilledText === "string" ? prefilledText : prompt.value
+    ).trim();
+
+    if (!message && !selectedImage) return;
+
+    const image = selectedImage;
+    const messageImageURL = image ? URL.createObjectURL(image) : null;
+
+    addMessage(
+      "user",
+      message || "Please explain this image.",
+      messageImageURL
+    );
+
+    prompt.value = "";
+    prompt.style.height = "auto";
+    clearSelectedImage();
+
+    setBusy(true);
+
+    try {
+      const imageData = image ? await fileToDataURL(image) : null;
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          message: message || "Explain the uploaded image in detail.",
+          image: imageData,
+          history: history.slice(-12)
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "The AI service is not connected yet.");
+      }
+
+      const reply = data.reply || data.message || data.output;
+
+      if (typeof reply !== "string" || !reply.trim()) {
+        throw new Error("The AI service returned an empty response.");
+      }
+
+      history.push(
+        {role: "user", content: message || "Explain the uploaded image."},
+        {role: "assistant", content: reply}
+      );
+
+      addMessage("assistant", reply);
+
+      if (speakReplies) speakText(reply);
+
+    } catch (error) {
+      const text = error.message === "Failed to fetch"
+        ? "MAGGPT's AI server is not connected yet. The interface is ready, but we still need to configure the secure AI backend."
+        : error.message || "Something went wrong. Please try again.";
+
+      addMessage("assistant", text);
+
+    } finally {
+      if (messageImageURL) URL.revokeObjectURL(messageImageURL);
+      setBusy(false);
+    }
+  }
+
+  /* CAMERA AND GALLERY */
+
+  function openPhotoChooser() {
+    photoModal.classList.add("open");
+  }
+
+  function closePhotoChooser() {
+    photoModal.classList.remove("open");
+  }
+
+  $("uploadBtn").addEventListener("click", openPhotoChooser);
+  $("cancelPhoto").addEventListener("click", closePhotoChooser);
+
+  photoModal.addEventListener("click", event => {
+    if (event.target === photoModal) closePhotoChooser();
+  });
+
+  $("takePhoto").addEventListener("click", () => {
+    closePhotoChooser();
+
+    // capture="environment" requests the rear camera.
+    // Android may still show its system camera chooser.
+    setTimeout(() => cameraInput.click(), 150);
+  });
+
+  $("choosePhoto").addEventListener("click", () => {
+    closePhotoChooser();
+    setTimeout(() => galleryInput.click(), 150);
+  });
+
+  function processSelectedImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast("Please select an image.");
+      return;
+    }
+
+    if (file.size > 8 * 1024 * 1024) {
+      toast("Choose an image smaller than 8 MB.");
+      return;
+    }
+
+    clearSelectedImage();
+
+    selectedImage = file;
+    previewObjectURL = URL.createObjectURL(file);
+    previewImg.src = previewObjectURL;
+    imagePreview.style.display = "block";
+
+    toast("Photo attached. Add a question or press send.");
+  }
+
+  cameraInput.addEventListener("change", () => {
+    processSelectedImage(cameraInput.files && cameraInput.files[0]);
+    cameraInput.value = "";
+  });
+
+  galleryInput.addEventListener("change", () => {
+    processSelectedImage(galleryInput.files && galleryInput.files[0]);
+    galleryInput.value = "";
+  });
+
+  function clearSelectedImage() {
+    selectedImage = null;
+    cameraInput.value = "";
+    galleryInput.value = "";
+    imagePreview.style.display = "none";
+    previewImg.removeAttribute("src");
+
+    if (previewObjectURL) {
+      URL.revokeObjectURL(previewObjectURL);
+      previewObjectURL = null;
+    }
+  }
+
+  $("removeImage").addEventListener("click", clearSelectedImage);
+
+  /* CHAT CONTROLS */
+
+  sendBtn.addEventListener("click", () => sendMessage());
+
+  prompt.addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  prompt.addEventListener("input", () => {
+    prompt.style.height = "auto";
+    prompt.style.height = Math.min(prompt.scrollHeight, 130) + "px";
+  });
+
+  document.querySelectorAll(".suggestion").forEach(button => {
+    button.addEventListener("click", () => {
+      prompt.value = button.dataset.prompt || "";
+      sendMessage();
+    });
+  });
+
+  $("newChat").addEventListener("click", () => {
+    if (busy) return;
+
+    chat.replaceChildren();
+    history = [];
+    $("welcome").style.display = "";
+    $("suggestions").style.display = "";
+    prompt.value = "";
+    prompt.style.height = "auto";
+    clearSelectedImage();
+    closePhotoChooser();
+
+    if (window.Android &&
+        typeof window.Android.stopSpeaking === "function") {
+      try {window.Android.stopSpeaking();} catch {}
+    }
+
+    if ("speechSynthesis" in window) {
+      try {window.speechSynthesis.cancel();} catch {}
+    }
+
+    toast("New conversation started.");
+  });
+
+  /* VOICE AND SPOKEN REPLIES */
+
+  readToggle.addEventListener("click", () => {
+    speakReplies = !speakReplies;
+    readToggle.textContent = speakReplies ? "🔊" : "🔇";
+
+    toast(speakReplies
+      ? "Spoken replies enabled."
+      : "Spoken replies disabled.");
+
+    if (!speakReplies) {
+      if (window.Android &&
+          typeof window.Android.stopSpeaking === "function") {
+        try {window.Android.stopSpeaking();} catch {}
+      }
+
+      if ("speechSynthesis" in window) {
+        try {window.speechSynthesis.cancel();} catch {}
+      }
+    }
+  });
+
+  function speakText(text) {
+    if (!speakReplies) return;
+
+    // Preferred for an APK with the native Android bridge.
+    if (window.Android &&
+        typeof window.Android.speakText === "function") {
+      try {
+        window.Android.speakText(String(text));
+        return;
+      } catch {}
+    }
+
+    // Browser fallback when available.
+    if ("speechSynthesis" in window &&
+        "SpeechSynthesisUtterance" in window) {
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(String(text));
+        utterance.lang = "en-US";
+        utterance.rate = 1;
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        // Keep text available without an unsupported-browser warning.
+      }
+    }
+  }
+
+  function startVoiceInput() {
+    // Preferred native Android speech recognition bridge.
+    if (window.Android &&
+        typeof window.Android.startVoiceRecognition === "function") {
+      try {
+        window.Android.startVoiceRecognition();
+        voiceBtn.classList.add("listening");
+        return;
+      } catch {}
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      try {
+        if (recognition) {
+          try {recognition.stop();} catch {}
+        }
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onstart = () => {
+          voiceBtn.classList.add("listening");
+        };
+
+        recognition.onresult = event => {
+          const result = event.results &&
+                         event.results[0] &&
+                         event.results[0][0];
+
+          if (result && result.transcript) {
+            prompt.value = result.transcript;
+            prompt.dispatchEvent(new Event("input"));
+          }
+        };
+
+        recognition.onerror = () => {
+          toast("Voice input couldn't start. You can type your message instead.");
+        };
+
+        recognition.onend = () => {
+          voiceBtn.classList.remove("listening");
+        };
+
+        recognition.start();
+        return;
+      } catch {}
+    }
+
+    // Never show "Speech not supported by this browser".
+    toast("You can type your message here.");
+  }
+
+  voiceBtn.addEventListener("click", startVoiceInput);
+
+  // Callbacks for a future native Android wrapper.
+  window.onMAGGPTVoiceResult = function(text) {
+    voiceBtn.classList.remove("listening");
+
+    if (typeof text === "string" && text.trim()) {
+      prompt.value = text.trim();
+      prompt.dispatchEvent(new Event("input"));
+      prompt.focus();
+    }
+  };
+
+  window.onMAGGPTVoiceError = function() {
+    voiceBtn.classList.remove("listening");
+    toast("Voice input couldn't start. You can type your message instead.");
+  };
+
+  window.onMAGGPTVoiceStarted = function() {
+    voiceBtn.classList.add("listening");
+  };
+
+  window.onMAGGPTVoiceEnded = function() {
+    voiceBtn.classList.remove("listening");
+  };
+
+  window.MAGGPTReady = true;
+})();
+</script>
+</body>
+</html>
